@@ -1,6 +1,6 @@
 declare module "sange" {
     export class Player implements common {
-        constructor(buffer: Buffer, bindEmitters?: Boolean)
+        constructor(buffer: Uint8Array, bindEmitters?: Boolean)
 
         get paused(): boolean;
         set paused(state: boolean);
