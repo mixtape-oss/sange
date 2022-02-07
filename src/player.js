@@ -3,95 +3,101 @@ const EventEmitter = require('events');
 const bindings = require('bindings');
 const ffplayer = bindings('sange');
 
-class Player extends EventEmitter{
-	constructor(buffer, bind_emitters = true){
-		super();
+const kPaused = Symbol("paused");
+const kPlayer = Symbol("player");
 
-		this.paused = false;
-		this.ffplayer = buffer ? new ffplayer(buffer) : new ffplayer();
+module.exports.Player = class Player extends EventEmitter {
+    constructor(buffer, bind_emitters = true) {
+        super();
 
-		if(bind_emitters){
-			this.ffplayer.onready = this.emit.bind(this, 'ready');
-			this.ffplayer.onpacket = this.emit.bind(this, 'packet');
-			this.ffplayer.onfinish = this.emit.bind(this, 'finish');
-			this.ffplayer.ondebug = this.emit.bind(this, 'debug');
-			this.ffplayer.onerror = this.emit.bind(this, 'onerror');
-		}
-	}
+        this[kPaused] = false;
+        this[kPlayer] = buffer 
+            ? new ffplayer(buffer) 
+            : new ffplayer();
 
-	setURL(url){
-		return this.ffplayer.setURL(url);
-	}
+        if (bind_emitters) {
+            this[kPlayer].onready = this.emit.bind(this, 'ready');
+            this[kPlayer].onpacket = this.emit.bind(this, 'packet');
+            this[kPlayer].onfinish = this.emit.bind(this, 'finish');
+            this[kPlayer].ondebug = this.emit.bind(this, 'debug');
+            this[kPlayer].onerror = this.emit.bind(this, 'onerror');
+        }
+    }
 
-	setOutput(channels, sample_rate, bitrate){
-		return this.ffplayer.setOutput(channels, sample_rate, bitrate);
-	}
+    get ffplayer() {
+        return this[kPlayer]
+    }
 
-	isPaused(){
-		return this.paused;
-	}
+    get paused() {
+        return this[kPaused]
+    }
 
-	setPaused(paused){
-		this.paused = paused;
+    set paused(state) {
+        this[kPaused] = state;
+        this[kPlayer].setPaused(state);
+    }
 
-		return this.ffplayer.setPaused(paused);
-	}
+    setURL(url) {
+        return this[kPlayer].setURL(url);
+    }
 
-	setVolume(volume){
-		return this.ffplayer.setVolume(volume);
-	}
+    setOutput(channels, sample_rate, bitrate) {
+        return this[kPlayer].setOutput(channels, sample_rate, bitrate);
+    }
 
-	setBitrate(bitrate){
-		return this.ffplayer.setBitrate(bitrate);
-	}
+    setVolume(volume) {
+        return this[kPlayer].setVolume(volume);
+    }
 
-	setRate(rate){
-		return this.ffplayer.setRate(rate);
-	}
+    setBitrate(bitrate) {
+        return this[kPlayer].setBitrate(bitrate);
+    }
 
-	setTempo(tempo){
-		return this.ffplayer.setTempo(tempo);
-	}
+    setRate(rate) {
+        return this[kPlayer].setRate(rate);
+    }
 
-	setTremolo(depth, rate){
-		return this.ffplayer.setTremolo(depth, rate);
-	}
+    setTempo(tempo) {
+        return this[kPlayer].setTempo(tempo);
+    }
 
-	setEqualizer(eqs){
-		return this.ffplayer.setEqualizer(...eqs);
-	}
+    setTremolo(depth, rate) {
+        return this[kPlayer].setTremolo(depth, rate);
+    }
 
-	seek(time){
-		return this.ffplayer.seek(time);
-	}
+    setEqualizer(eqs) {
+        return this[kPlayer].setEqualizer(...eqs);
+    }
 
-	getTime(){
-		return this.ffplayer.getTime();
-	}
+    seek(time) {
+        return this[kPlayer].seek(time);
+    }
 
-	getDuration(){
-		return this.ffplayer.getDuration();
-	}
+    getTime() {
+        return this[kPlayer].getTime();
+    }
 
-	getFramesDropped(){
-		return this.ffplayer.getFramesDropped();
-	}
+    getDuration() {
+        return this[kPlayer].getDuration();
+    }
 
-	getTotalFrames(){
-		return this.ffplayer.getTotalFrames();
-	}
+    getFramesDropped() {
+        return this[kPlayer].getFramesDropped();
+    }
 
-	start(){
-		return this.ffplayer.start();
-	}
+    getTotalFrames() {
+        return this[kPlayer].getTotalFrames();
+    }
 
-	stop(){
-		return this.ffplayer.stop();
-	}
+    start() {
+        return this[kPlayer].start();
+    }
 
-	destroy(){
-		return this.ffplayer.destroy();
-	}
+    stop() {
+        return this[kPlayer].stop();
+    }
+
+    destroy() {
+        return this[kPlayer].destroy();
+    }
 }
-
-module.exports = Player;
