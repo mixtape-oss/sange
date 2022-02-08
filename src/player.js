@@ -81,14 +81,6 @@ module.exports.Player = class Player extends EventEmitter {
         return this[kPlayer].getDuration();
     }
 
-    getFramesDropped() {
-        return this[kPlayer].getFramesDropped();
-    }
-
-    getTotalFrames() {
-        return this[kPlayer].getTotalFrames();
-    }
-
     start() {
         return this[kPlayer].start();
     }
